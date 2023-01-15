@@ -111,6 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CELERY_BROKER_URL = 'redis://redis:6379'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
