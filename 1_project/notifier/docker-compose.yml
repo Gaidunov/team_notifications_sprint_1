@@ -39,3 +39,16 @@ services:
       - redis
     depends_on:
       - rabbit
+
+  periodic_task_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ./scripts/run_periodic_celery.sh
+    volumes:
+      - .:/app
+    links:
+      - rabbit
+      - redis
+    depends_on:
+      - rabbit
