@@ -15,6 +15,6 @@ class Notification(models.Model):
 
 class NotificationHistory(models.Model):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id_auth = models.UUIDField(editable=False)
     sent_at = models.DateTimeField(auto_now_add=True)
     read_at = models.DateTimeField(null=True, blank=True)
