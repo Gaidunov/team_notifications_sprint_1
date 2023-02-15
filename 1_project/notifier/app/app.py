@@ -7,7 +7,7 @@ logger = structlog.get_logger(__name__)
 app = Flask(__name__)
 
 
-@app.route('/queue_notificaton', methods=['POST'])
+@app.route('api/queue_notificaton', methods=['POST'])
 def queue_notification():
     message_type = request.json['type']
     message = request.json['message']
