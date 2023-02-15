@@ -14,16 +14,7 @@ class Notification(models.Model):
     status = models.CharField(max_length=255)
     send_at = models.DateTimeField(auto_now=True)
     notification_type = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
-
-    class Timzone(models.TextChoices):
-        UTC = 'UTC'
-        GMT = 'GMT'
-
-    timezone = models.CharField(
-        max_length=10,
-        choices=Timzone.choices,
-        default=Timzone.CREATED
-    )
+    timezone = models.CharField(max_length=10)
 
 
 class NotificationHistory(models.Model):
