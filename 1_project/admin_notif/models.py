@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class NotificationType(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
+
 
 class Notification(models.Model):
     text = models.TextField()
@@ -12,6 +14,17 @@ class Notification(models.Model):
     status = models.CharField(max_length=255)
     send_at = models.DateTimeField(auto_now=True)
     notification_type = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
+
+    class Timzone(models.TextChoices):
+        UTC = 'UTC'
+        GMT = 'GMT'
+
+    timezone = models.CharField(
+        max_length=10,
+        choices=Timzone.choices,
+        default=Timzone.CREATED
+    )
+
 
 class NotificationHistory(models.Model):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)

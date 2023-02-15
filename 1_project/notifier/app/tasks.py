@@ -1,12 +1,34 @@
 from celery import Celery
+import structlog
+from config import config
 
-celery = Celery(__name__, broker='amqp://localhost')
+logger = structlog.get_logger(__name__)
 
-@celery.task
-def add_to_queue(message, user_id, queue):
-    if queue == 'priority':
-        # Добавить сообщение в очередь priority
-        print(f'Adding {message} to priority queue for user {user_id}')
-    else:
-        # Добавить сообщение в очередь plain
-        print(f'Adding {message} to plain queue for user {user_id}')
+app = Celery(
+    'tasks',
+    backend=config.redis_url,
+    broker=config.broker_url
+)
+
+
+def get_generator(notification_type):
+    if notification_type == 'push':
+        return ...
+
+
+@app.task(queue='high_priority')
+def queue_high_priority_notification(message, user_id, notification_type):
+    generator = get_generator(notification_type)
+    notification = generator.make_notification(
+        message, user_id
+    )
+    notification.send()
+
+
+@app.task(queue='default')
+def queue_notification(message, user_id, notification_type):
+    generator = get_generator(notification_type)
+    notification = generator.make_notification(
+        message, user_id
+    )
+    notification.send()
