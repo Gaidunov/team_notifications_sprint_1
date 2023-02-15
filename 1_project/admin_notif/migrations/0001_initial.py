@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
+    class Timzone(models.TextChoices):
+        UTC = 'UTC'
+        GMT = 'GMT'
+
     operations = [
         migrations.CreateModel(
             name='Notification',
@@ -22,6 +26,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('status', models.CharField(max_length=255)),
                 ('send_at', models.DateTimeField(auto_now=True)),
+                ('timezone', models.CharField(max_length=10, choices=Timzone.choices, default=Timzone.CREATED)),
             ],
         ),
         migrations.CreateModel(
