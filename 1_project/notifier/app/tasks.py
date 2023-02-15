@@ -11,6 +11,7 @@ from celery.schedules import crontab
 from ..models import Notification
 from datetime import datetime, timedelta, time
 import pytz
+import requests
 
 logger = structlog.get_logger(__name__)
 
@@ -66,11 +67,13 @@ def queue_notification(
     user_id: int,
     notification_type: str
 ) -> None:
-    user_data = {'name': 'client_name'}  # api reqeust here
-
+    user_data = requests.get(
+        'http://192.168.14.88:4242/api/v1/users/get_user_data', 
+        headers={'user_id': user_id}
+        )
     generator = get_generator(notification_type)
     notification = generator(
-        message, user_data.get('name')
+        message, user_data.get('login')
     ).make_notification()
     notification.send()
 
@@ -87,10 +90,12 @@ def queue_periodic_notifications() -> None:
         client_time = datetime.now(pytz.timezone(notif.timezone))
 
         if time(hour=8) <= client_time.time() <= time(hour=18):
-            user_data = {'name': 'client_name'}  # api reqeust here
-
+            user_data = requests.get(
+                'http://192.168.14.88:4242/api/v1/users/get_user_data', 
+                headers={'user_id': user_id}
+                )
             notification = EmailGenerator(
-                'Have you seen our new films? Click the link to see them!', user_data.get('name')
+                'Have you seen our new films? Click the link to see them!', user_data.get('login')
             ).make_notification()
 
             notification.send()
