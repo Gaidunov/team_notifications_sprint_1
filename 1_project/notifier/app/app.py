@@ -1,6 +1,9 @@
+import os
+
 import structlog
 from flask import Flask, request
-from tasks import queue_high_priority_notification, queue_notification
+
+from .tasks import queue_high_priority_notification, queue_notification
 
 logger = structlog.get_logger(__name__)
 

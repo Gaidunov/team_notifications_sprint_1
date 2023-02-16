@@ -1,7 +1,10 @@
+import smtplib
 from abc import ABC, abstractmethod
+from email.mime.text import MIMEText
 from typing import Optional
 
-from static.letter_template import generate_html_message
+from .api_config.config import config
+from .templates.letter_template import generate_html_message
 
 
 class Notification(ABC):
@@ -11,11 +14,23 @@ class Notification(ABC):
 
 
 class HtmlNotification:
-    def __init__(self, html_message: str) -> None:
-        self.html_message = html_message
+    SUBJECT = 'Film service notification'
 
-    def send(self) -> None:
-        """Send notification using Amazon SQS or other service here"""
+    def __init__(self, html_message: str) -> None:
+        self._html_message = html_message
+
+    def send(self, email: str) -> None:
+        smtp_connection = smtplib.SMTP('localhost', 1025)
+        message = self._generate_smtp_message(email)
+        smtp_connection.send_message(message)
+        smtp_connection.quit()
+
+    def _generate_smtp_message(self, email: str) -> MIMEText:
+        message = MIMEText(self._html_message)
+        message['From'] = config.service_email
+        message['To'] = email
+        message['Subject'] = self.SUBJECT
+        return message
 
 
 class BaseNotificationGenerator(ABC):

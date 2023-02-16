@@ -1,7 +1,6 @@
 version: '3'
 
-services:  
-
+services:
   redis:
     image: redis:latest
     hostname: redis
@@ -18,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile
     hostname: web
-    command: ./scripts/run_web.sh
+    command: /bin/bash -c "gunicorn --bind 0.0.0.0:5000 app.wsgi:app"
     volumes:
       - .:/app 
     expose:
@@ -63,3 +62,9 @@ services:
       - redis
     depends_on:
       - rabbit
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"

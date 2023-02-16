@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AdminNotifConfig(AppConfig):
+class DjangoAdminConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'admin_notif'
+    name = 'django_admin'
