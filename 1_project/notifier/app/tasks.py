@@ -70,7 +70,7 @@ def queue_notification(
     notification_type: str
 ) -> None:
     user_data = requests.get(
-        'http://192.168.14.88:4242/api/v1/users/get_user_data', 
+        f'{config.service_auth}/api/v1/users/get_user_data', 
         headers={'user_id': user_id}
         )
     generator = get_generator(notification_type)
@@ -93,7 +93,7 @@ def queue_periodic_notifications() -> None:
 
         if time(hour=8) <= client_time.time() <= time(hour=18):
             user_data = requests.get(
-                'http://192.168.14.88:4242/api/v1/users/get_user_data', 
+                f'{config.service_auth}/api/v1/users/get_user_data', 
                 headers={'user_id': user_id}
                 )
             notification = EmailGenerator(

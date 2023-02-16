@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 
 
 class UUIDMixin(models.Model):
@@ -19,7 +19,7 @@ class NotificationType(UUIDMixin):
 class Notification(UUIDMixin):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    recipients = models.ManyToManyField(User)
+    recipients = ArrayField(models.UUIDField(default=uuid.uuid4, editable=False), blank=True)
     status = models.CharField(max_length=255)
     send_at = models.DateTimeField(auto_now=True)
     notification_type = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
@@ -29,5 +29,6 @@ class Notification(UUIDMixin):
 class NotificationHistory(UUIDMixin):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     user_id_auth = models.UUIDField(editable=False)
+    adres = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     read_at = models.DateTimeField(null=True, blank=True)
