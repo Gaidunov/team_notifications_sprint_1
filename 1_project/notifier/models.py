@@ -1,13 +1,20 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 
+class UUIDMixin(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-class NotificationType(models.Model):
+    class Meta:
+        abstract = True
+
+class NotificationType(UUIDMixin):
     name = models.CharField(max_length=255)
     description = models.TextField()
 
 
-class Notification(models.Model):
+class Notification(UUIDMixin):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     recipients = models.ManyToManyField(User)
@@ -17,7 +24,7 @@ class Notification(models.Model):
     timezone = models.CharField(max_length=10)
 
 
-class NotificationHistory(models.Model):
+class NotificationHistory(UUIDMixin):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     user_id_auth = models.UUIDField(editable=False)
     sent_at = models.DateTimeField(auto_now_add=True)
