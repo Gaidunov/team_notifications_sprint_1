@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: Dockerfile
     hostname: web
-    command: ./scripts/run_web.sh
+    command: /bin/bash -c "gunicorn --bind 0.0.0.0:5000 app.wsgi:app"
     volumes:
       - .:/app 
     expose:

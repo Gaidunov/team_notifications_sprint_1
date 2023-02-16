@@ -1,17 +1,19 @@
-from celery import Celery
+from datetime import datetime, timedelta, time
+
+import pytz
+import requests
 import structlog
-from .config import config
-from generator import (
+from celery import Celery
+from celery.schedules import crontab
+
+from .constants import NotificationType
+from .generator import (
     EmailGenerator,
     PushGenerator,
     SMSGenerator,
 )
-from constant import NotificationType
-from celery.schedules import crontab
+from .api_config.config import config
 from ..models import Notification
-from datetime import datetime, timedelta, time
-import pytz
-import requests
 
 logger = structlog.get_logger(__name__)
 
