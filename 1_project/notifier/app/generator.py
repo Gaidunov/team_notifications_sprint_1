@@ -1,9 +1,10 @@
+import smtplib
 from abc import ABC, abstractmethod
+from email.mime.text import MIMEText
 from typing import Optional
 
-from templates.letter_template import generate_html_message
-import smtplib
-from email.mime.text import MIMEText
+from .api_config.config import config
+from .templates.letter_template import generate_html_message
 
 
 class Notification(ABC):
@@ -13,20 +14,22 @@ class Notification(ABC):
 
 
 class HtmlNotification:
+    SUBJECT = 'Film service notification'
+
     def __init__(self, html_message: str) -> None:
         self._html_message = html_message
 
-    def send(self) -> None:
+    def send(self, email: str) -> None:
         smtp_connection = smtplib.SMTP('localhost', 1025)
-        message = self._generate_smtp_message()
+        message = self._generate_smtp_message(email)
         smtp_connection.send_message(message)
         smtp_connection.quit()
 
-    def _generate_smtp_message(self) -> MIMEText:
+    def _generate_smtp_message(self, email: str) -> MIMEText:
         message = MIMEText(self._html_message)
-        message['From'] = 'notifier@example.com'
-        message['To'] = 'recipient@example.com'
-        message['Subject'] = 'Film service notification'
+        message['From'] = config.service_email
+        message['To'] = email
+        message['Subject'] = self.SUBJECT
         return message
 
 

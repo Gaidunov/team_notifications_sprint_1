@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta, time
 
+import django
+django.setup()
 import pytz
 import requests
 import structlog
@@ -13,7 +15,7 @@ from .generator import (
     SMSGenerator,
 )
 from .api_config.config import config
-from ..models import Notification
+from django_admin.models import Notification
 
 logger = structlog.get_logger(__name__)
 
@@ -27,7 +29,7 @@ app = Celery(
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(minute=1),
+        crontab(minute=30),
         queue_periodic_notifications.s(),
         expires=10
     )
@@ -94,13 +96,13 @@ def queue_periodic_notifications() -> None:
         if time(hour=8) <= client_time.time() <= time(hour=18):
             user_data = requests.get(
                 f'{config.service_auth}/api/v1/users/get_user_data', 
-                headers={'user_id': user_id}
-                )
+                headers={'user_id': notif.user_id_auth}
+            )
             notification = EmailGenerator(
                 'Have you seen our new films? Click the link to see them!', user_data.get('login')
             ).make_notification()
 
-            notification.send()
+            notification.send(user_data['communication_address'])
 
             notif.send_at = datetime.utcnow()
             updated_notifications.append(notif)

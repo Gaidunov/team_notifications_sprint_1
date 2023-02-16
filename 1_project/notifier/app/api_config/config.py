@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     redis_url: str
     broker_url: str
     service_auth: str
+    service_email: str
 
     class Config:
         env_file = '.env'
