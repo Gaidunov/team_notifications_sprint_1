@@ -7,6 +7,7 @@ load_dotenv()
 class Settings(BaseSettings):
     redis_url: str
     broker_url: str
+    service_auth: str
 
     class Config:
         env_file = '.env'
